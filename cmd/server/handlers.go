@@ -1,11 +1,11 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"math/rand"
 	"net/http"
-	"sync"
 	"time"
 
 	"cloud.google.com/go/spanner"
@@ -59,32 +59,42 @@ func (h *Handlers) Insert(w http.ResponseWriter, r *http.Request) {
 			CommitedAt:    spanner.CommitTimestamp,
 		})
 	}
-	wg := &sync.WaitGroup{}
-	wg.Add(1)
+	resultCh := make(chan string)
 	go func() {
 		_, err := h.OrdersStore1.Insert(ctx, userID, orderID, details1)
 		if err != nil {
-			log.Printf("failed OrdersStore1.Insert() err=%s", err)
+			msg := fmt.Sprintf("failed OrdersStore1.Insert() err=%s", err)
+			log.Println(msg)
+			resultCh <- msg
 		}
-		wg.Done()
+		resultCh <- fmt.Sprintf("done OrdersStore1.Insert() OrderID=%s", orderID)
 	}()
-	wg.Add(1)
 	go func() {
 		_, err := h.OrdersStore2.Insert(ctx, userID, orderID, details2)
 		if err != nil {
-			log.Printf("failed OrdersStore2.Insert() err=%s", err)
+			msg := fmt.Sprintf("failed OrdersStore2.Insert() err=%s", err)
+			log.Println(msg)
+			resultCh <- msg
 		}
-		wg.Done()
+		resultCh <- fmt.Sprintf("done OrdersStore2.Insert() OrderID=%s", orderID)
 	}()
-	wg.Add(1)
 	go func() {
 		_, err := h.OrdersStore3.Insert(ctx, userID, orderID, details3)
 		if err != nil {
-			log.Printf("failed OrdersStore3.Insert() err=%s", err)
+			msg := fmt.Sprintf("failed OrdersStore3.Insert() err=%s", err)
+			log.Println(msg)
+			resultCh <- msg
 		}
-		wg.Done()
+		resultCh <- fmt.Sprintf("done OrdersStore3.Insert() OrderID=%s", orderID)
 	}()
-	wg.Wait()
+	var results []string
+	for i := 0; i < 3; i++ {
+		ret := <-resultCh
+		results = append(results, ret)
+	}
 
 	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(results); err != nil {
+		log.Println(err)
+	}
 }
