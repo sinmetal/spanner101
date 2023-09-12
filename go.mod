@@ -3,10 +3,14 @@ module github.com/sinmetal/spanner101
 go 1.21.0
 
 require (
+	cloud.google.com/go/spanner v1.49.0
+	github.com/google/uuid v1.3.0
+)
+
+require (
 	cloud.google.com/go v0.110.2 // indirect
 	cloud.google.com/go/compute v1.19.3 // indirect
 	cloud.google.com/go/compute/metadata v0.2.3 // indirect
-	cloud.google.com/go/spanner v1.49.0 // indirect
 	github.com/census-instrumentation/opencensus-proto v0.4.1 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/cncf/udpa/go v0.0.0-20220112060539-c52dc94e7fbe // indirect
