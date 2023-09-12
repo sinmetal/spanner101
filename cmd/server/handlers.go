@@ -26,7 +26,7 @@ func (h *Handlers) Insert(w http.ResponseWriter, r *http.Request) {
 
 	userID := data.RandomUserID()
 	orderUUID := uuid.New().String()
-	orderDatetimeID := fmt.Sprintf("ORDER%sZ", time.Now().Format("2006-0102-150405"))
+	orderDatetimeID := fmt.Sprintf("ORDER%sZ", time.Now().Format("20060102-150405"))
 	detailCount := rand.Intn(10) + 1
 
 	var details1 []*stores1.OrderDetail
