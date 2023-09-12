@@ -69,6 +69,7 @@ func (h *Handlers) Insert(w http.ResponseWriter, r *http.Request) {
 			msg := fmt.Sprintf("failed OrdersStore1.Insert() err=%s", err)
 			fmt.Println(msg)
 			resultCh <- msg
+			return
 		}
 		resultCh <- fmt.Sprintf("done OrdersStore1.Insert() OrderID=%s", orderUUID)
 	}()
@@ -78,6 +79,7 @@ func (h *Handlers) Insert(w http.ResponseWriter, r *http.Request) {
 			msg := fmt.Sprintf("failed OrdersStore2.Insert() err=%s", err)
 			fmt.Println(msg)
 			resultCh <- msg
+			return
 		}
 		resultCh <- fmt.Sprintf("done OrdersStore2.Insert() OrderID=%s", orderUUID)
 	}()
@@ -87,6 +89,7 @@ func (h *Handlers) Insert(w http.ResponseWriter, r *http.Request) {
 			msg := fmt.Sprintf("failed OrdersStore3.Insert() err=%s", err)
 			fmt.Println(msg)
 			resultCh <- msg
+			return
 		}
 		resultCh <- fmt.Sprintf("done OrdersStore3.Insert() OrderID=%s", orderDatetimeID)
 	}()
