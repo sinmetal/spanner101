@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"math/rand"
 	"net/http"
 	"time"
@@ -25,7 +24,7 @@ func (h *Handlers) Insert(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	userID := data.RandomUserID()
-	orderID := fmt.Sprintf("o%s", time.Now().Format("2006-0102-150405"))
+	orderID := fmt.Sprintf("ORDER%sZ", time.Now().Format("2006-0102-150405"))
 	detailCount := rand.Intn(10) + 1
 
 	var details1 []*stores1.OrderDetail
@@ -64,7 +63,7 @@ func (h *Handlers) Insert(w http.ResponseWriter, r *http.Request) {
 		_, err := h.OrdersStore1.Insert(ctx, userID, orderID, details1)
 		if err != nil {
 			msg := fmt.Sprintf("failed OrdersStore1.Insert() err=%s", err)
-			log.Println(msg)
+			fmt.Println(msg)
 			resultCh <- msg
 		}
 		resultCh <- fmt.Sprintf("done OrdersStore1.Insert() OrderID=%s", orderID)
@@ -73,7 +72,7 @@ func (h *Handlers) Insert(w http.ResponseWriter, r *http.Request) {
 		_, err := h.OrdersStore2.Insert(ctx, userID, orderID, details2)
 		if err != nil {
 			msg := fmt.Sprintf("failed OrdersStore2.Insert() err=%s", err)
-			log.Println(msg)
+			fmt.Println(msg)
 			resultCh <- msg
 		}
 		resultCh <- fmt.Sprintf("done OrdersStore2.Insert() OrderID=%s", orderID)
@@ -82,7 +81,7 @@ func (h *Handlers) Insert(w http.ResponseWriter, r *http.Request) {
 		_, err := h.OrdersStore3.Insert(ctx, userID, orderID, details3)
 		if err != nil {
 			msg := fmt.Sprintf("failed OrdersStore3.Insert() err=%s", err)
-			log.Println(msg)
+			fmt.Println(msg)
 			resultCh <- msg
 		}
 		resultCh <- fmt.Sprintf("done OrdersStore3.Insert() OrderID=%s", orderID)
@@ -95,6 +94,6 @@ func (h *Handlers) Insert(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode(results); err != nil {
-		log.Println(err)
+		fmt.Println(err)
 	}
 }
