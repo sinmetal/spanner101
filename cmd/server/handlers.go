@@ -44,6 +44,7 @@ func (h *Handlers) Insert(w http.ResponseWriter, r *http.Request) {
 			CommitedAt:    spanner.CommitTimestamp,
 		})
 		details2 = append(details2, &stores2.OrderDetail{
+			UserID:        userID,
 			OrderID:       orderUUID,
 			OrderDetailID: int64(i + 1),
 			ItemID:        item.ItemID,
@@ -52,6 +53,7 @@ func (h *Handlers) Insert(w http.ResponseWriter, r *http.Request) {
 			CommitedAt:    spanner.CommitTimestamp,
 		})
 		details3 = append(details3, &stores3.OrderDetail{
+			UserID:        userID,
 			OrderID:       orderDatetimeID,
 			OrderDetailID: int64(i + 1),
 			ItemID:        item.ItemID,
