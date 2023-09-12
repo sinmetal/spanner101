@@ -1,11 +1,3 @@
-CREATE TABLE Items (
-    ItemID STRING(64) NOT NULL,
-    ItemName STRING(1024) NOT NULL,
-    Price INT64 NOT NULL,
-    CreatedAt TIMESTAMP NOT NULL OPTIONS (allow_commit_timestamp=true),
-    UpdatedAt TIMESTAMP NOT NULL OPTIONS (allow_commit_timestamp=true),
-) PRIMARY KEY (ItemID);
-
 CREATE TABLE Orders (
     OrderID STRING(64) NOT NULL,
     UserID STRING(64) NOT NULL,
