@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"cloud.google.com/go/spanner"
+	"github.com/google/uuid"
 	"github.com/sinmetal/spanner101/data"
 	stores1 "github.com/sinmetal/spanner101/pattern1/stores"
 	stores2 "github.com/sinmetal/spanner101/pattern2/stores"
@@ -24,7 +25,8 @@ func (h *Handlers) Insert(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	userID := data.RandomUserID()
-	orderID := fmt.Sprintf("ORDER%sZ", time.Now().Format("2006-0102-150405"))
+	orderUUID := uuid.New().String()
+	orderDatetimeID := fmt.Sprintf("ORDER%sZ", time.Now().Format("2006-0102-150405"))
 	detailCount := rand.Intn(10) + 1
 
 	var details1 []*stores1.OrderDetail
@@ -34,7 +36,7 @@ func (h *Handlers) Insert(w http.ResponseWriter, r *http.Request) {
 		item := data.RandomItem()
 		quantity := rand.Int63n(1000) + 1
 		details1 = append(details1, &stores1.OrderDetail{
-			OrderID:       orderID,
+			OrderID:       orderUUID,
 			OrderDetailID: int64(i + 1),
 			ItemID:        item.ItemID,
 			Price:         item.Price,
@@ -42,7 +44,7 @@ func (h *Handlers) Insert(w http.ResponseWriter, r *http.Request) {
 			CommitedAt:    spanner.CommitTimestamp,
 		})
 		details2 = append(details2, &stores2.OrderDetail{
-			OrderID:       orderID,
+			OrderID:       orderUUID,
 			OrderDetailID: int64(i + 1),
 			ItemID:        item.ItemID,
 			Price:         item.Price,
@@ -50,7 +52,7 @@ func (h *Handlers) Insert(w http.ResponseWriter, r *http.Request) {
 			CommitedAt:    spanner.CommitTimestamp,
 		})
 		details3 = append(details3, &stores3.OrderDetail{
-			OrderID:       orderID,
+			OrderID:       orderDatetimeID,
 			OrderDetailID: int64(i + 1),
 			ItemID:        item.ItemID,
 			Price:         item.Price,
@@ -60,31 +62,31 @@ func (h *Handlers) Insert(w http.ResponseWriter, r *http.Request) {
 	}
 	resultCh := make(chan string)
 	go func() {
-		_, err := h.OrdersStore1.Insert(ctx, userID, orderID, details1)
+		_, err := h.OrdersStore1.Insert(ctx, userID, orderUUID, details1)
 		if err != nil {
 			msg := fmt.Sprintf("failed OrdersStore1.Insert() err=%s", err)
 			fmt.Println(msg)
 			resultCh <- msg
 		}
-		resultCh <- fmt.Sprintf("done OrdersStore1.Insert() OrderID=%s", orderID)
+		resultCh <- fmt.Sprintf("done OrdersStore1.Insert() OrderID=%s", orderUUID)
 	}()
 	go func() {
-		_, err := h.OrdersStore2.Insert(ctx, userID, orderID, details2)
+		_, err := h.OrdersStore2.Insert(ctx, userID, orderUUID, details2)
 		if err != nil {
 			msg := fmt.Sprintf("failed OrdersStore2.Insert() err=%s", err)
 			fmt.Println(msg)
 			resultCh <- msg
 		}
-		resultCh <- fmt.Sprintf("done OrdersStore2.Insert() OrderID=%s", orderID)
+		resultCh <- fmt.Sprintf("done OrdersStore2.Insert() OrderID=%s", orderUUID)
 	}()
 	go func() {
-		_, err := h.OrdersStore3.Insert(ctx, userID, orderID, details3)
+		_, err := h.OrdersStore3.Insert(ctx, userID, orderDatetimeID, details3)
 		if err != nil {
 			msg := fmt.Sprintf("failed OrdersStore3.Insert() err=%s", err)
 			fmt.Println(msg)
 			resultCh <- msg
 		}
-		resultCh <- fmt.Sprintf("done OrdersStore3.Insert() OrderID=%s", orderID)
+		resultCh <- fmt.Sprintf("done OrdersStore3.Insert() OrderID=%s", orderDatetimeID)
 	}()
 	var results []string
 	for i := 0; i < 3; i++ {
