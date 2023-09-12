@@ -25,6 +25,7 @@ steps:
       - --concurrency=8
       - --execution-environment=gen1
       - --cpu-throttling
+      - --allow-unauthenticated
       - --tag=$BRANCH_NAME
       - --image=us-central1-docker.pkg.dev/$PROJECT_ID/spanner101/app:$COMMIT_SHA
       - --set-env-vars=SPANNER_DATABASE1=projects/gcpug-public-spanner/instances/merpay-sponsored-instance/databases/sinmetal1
