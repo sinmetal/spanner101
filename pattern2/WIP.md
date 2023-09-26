@@ -8,6 +8,23 @@ INSERT INTO Orders(UserID, OrderID, Amount, CommitedAt) VALUES ("gold","10ac9c3c
 INSERT INTO OrderDetails(UserID, OrderID, OrderDetailID, ItemID, Price, Quantity, CommitedAt) VALUES("gold", "10ac9c3c-2e21-460e-be22-4527c11c1285", 1, "pen", 100, 1, PENDING_COMMIT_TIMESTAMP());
 ```
 
+```
+SELECT
+  Orders.UserID,
+  Orders.OrderID,
+  Orders.Amount,
+  Orders.CommitedAt,
+  OrderDetails.OrderDetailID,
+  OrderDetails.ItemID,
+  OrderDetails.Price,
+  OrderDetails.Quantity
+FROM
+  Orders JOIN OrderDetails ON Orders.OrderID = OrderDetails.OrderID
+WHERE
+  Orders.CommitedAt >= TIMESTAMP('2023-09-01 00:00:00', "Asia/Tokyo")
+  AND Orders.CommitedAt < TIMESTAMP('2023-10-01 00:00:00', "Asia/Tokyo")
+```
+
 
 ```
 EXPLAIN ANALYZE
@@ -69,4 +86,8 @@ rows scanned:         557 rows
 deleted rows scanned: 0 rows
 optimizer version:    5
 optimizer statistics: auto_20230906_07_18_51UTC
+```
+
+```
+
 ```
