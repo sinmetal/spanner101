@@ -1,0 +1,33 @@
+steps:
+  - name: 'golang:1.21'
+    entrypoint: 'go'
+    args: [ 'build', '-o', 'app', 'github.com/sinmetal/spanner101/cmd/server' ]
+    env: [ 'CGO_ENABLED=0' ]
+  - name: 'gcr.io/kaniko-project/executor:v1.9.2'
+    args:
+      - --destination=us-central1-docker.pkg.dev/$PROJECT_ID/spanner101/app:$BRANCH_NAME
+      - --destination=us-central1-docker.pkg.dev/$PROJECT_ID/spanner101/app:$COMMIT_SHA
+      - --cache=true
+      - --cache-ttl=6h
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'gcloud'
+    args:
+      - beta
+      - run
+      - deploy
+      - spanner101
+      - --region=us-central1
+      - --platform=managed
+      - --service-account=spanner101@$PROJECT_ID.iam.gserviceaccount.com
+      - --max-instances=1
+      - --cpu=1
+      - --memory=256Mi
+      - --concurrency=8
+      - --execution-environment=gen1
+      - --cpu-throttling
+      - --allow-unauthenticated
+      - --tag=$BRANCH_NAME
+      - --image=us-central1-docker.pkg.dev/$PROJECT_ID/spanner101/app:$COMMIT_SHA
+      - --set-env-vars=SPANNER_DATABASE1=projects/gcpug-public-spanner/instances/merpay-sponsored-instance/databases/sinmetal1
+      - --set-env-vars=SPANNER_DATABASE2=projects/gcpug-public-spanner/instances/merpay-sponsored-instance/databases/sinmetal2
+      - --set-env-vars=SPANNER_DATABASE3=projects/gcpug-public-spanner/instances/merpay-sponsored-instance/databases/sinmetal3
