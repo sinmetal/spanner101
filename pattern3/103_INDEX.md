@@ -12,8 +12,6 @@ INSERT INTO Users (UserID, UserName, CreatedAt, UpdatedAt) VALUES ("sapphire", "
 INSERT INTO Orders(UserID, OrderID, Amount, CommitedAt) VALUES ("gold","ORDER20230912-072500Z", 100, PENDING_COMMIT_TIMESTAMP());
 INSERT INTO OrderDetails(UserID, OrderID, OrderDetailID, ItemID, Price, Quantity, CommitedAt) VALUES("gold", "ORDER20230912-072500Z", 1, "pen", 100, 1, PENDING_COMMIT_TIMESTAMP());
 INSERT INTO Orders(UserID, OrderID, Amount, CommitedAt) VALUES ("gold","ORDER20230912-082500Z", 400, PENDING_COMMIT_TIMESTAMP());
-INSERT INTO OrderDetails(UserID, OrderID, OrderDetailID, ItemID, Price, Quantity, CommitedAt) VALUES("gold", "ORDER20230912-082500Z", 1, "pen", 100, 1, PENDING_COMMIT_TIMESTAMP());
-INSERT INTO OrderDetails(UserID, OrderID, OrderDetailID, ItemID, Price, Quantity, CommitedAt) VALUES("gold", "ORDER20230912-082500Z", 2, "note", 150, 2, PENDING_COMMIT_TIMESTAMP());
 ```
 
 以下のような感じで、指定したユーザのOrderを新しい順で取得するのが得意

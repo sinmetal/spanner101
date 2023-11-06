@@ -6,7 +6,7 @@ CREATE TABLE Orders (
 ) PRIMARY KEY (UserID, OrderID), INTERLEAVE IN PARENT Users ON DELETE CASCADE,
   ROW DELETION POLICY (OLDER_THAN(CommitedAt, INTERVAL 90 DAY));
 
-CREATE INDEX UserIDAndCommitedAtDescByOrdersParentUsers
+CREATE INDEX UserIDAndCommitedAtDescParentUsersByOrders
 ON Orders (
     UserID,
     CommitedAt DESC
