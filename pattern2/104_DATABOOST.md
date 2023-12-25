@@ -29,7 +29,7 @@ UsersにインターリーブしているINDEXであれば、DataBoostで参照�
 
 ```
 SELECT * FROM EXTERNAL_QUERY(
-  'gcpug-public-spanner.asia-northeast1.spanner_sinmetal2',
+  'gcpug-public-spanner.us-central1.spanner_sinmetal2',
   '''SELECT
        Users.UserID,
        Orders.OrderID,
