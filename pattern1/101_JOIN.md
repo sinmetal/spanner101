@@ -3,12 +3,13 @@
 Pattern1は [インターリーブ](https://cloud.google.com/spanner/docs/schema-and-data-model?hl=en#parent-child) していないスキーマ構成。
 
 # Sample Data
-```
-INSERT INTO Singers (SingerId, FirstName, LastName) VALUES (1, "Nick", "Porter");
-INSERT INTO Albums (SingerId, AlbumId, Title) VALUES (1, 1, "Total Junk"), (1, 2, "Nice Field");
-```
 
 ```
+cat ./dml/101_JOIN/sample_data.sql
+spanner-cli -p $CLOUDSDK_CORE_PROJECT -i $CLOUDSDK_SPANNER_INSTANCE -d $DB1 -e "$(cat ./dml/101_JOIN/sample_data.sql)" -t
+```
+
+``` query1.sql
 EXPLAIN ANALYZE
 SELECT * FROM Singers s
 INNER JOIN Albums a ON s.SingerId = a.SingerId
@@ -16,7 +17,7 @@ WHERE s.SingerId = 1;
 ```
 
 ```
-spanner-cli -p gcpug-public-spanner -i merpay-sponsored-instance -d $DB1 -e "$(cat query.sql)" -t
+spanner-cli -p $CLOUDSDK_CORE_PROJECT -i $CLOUDSDK_SPANNER_INSTANCE -d $DB1 -e "$(cat ./dml/101_JOIN/query1.sql)" -t
 +-----+--------------------------------------------------------------------------------------------+---------------+------------+---------------+
 | ID  | Query_Execution_Plan                                                                       | Rows_Returned | Executions | Total_Latency |
 +-----+--------------------------------------------------------------------------------------------+---------------+------------+---------------+
