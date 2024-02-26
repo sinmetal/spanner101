@@ -1,13 +1,15 @@
-# インターリーブ比較体験
+# JOIN
 
-Pattern1は [インターリーブ](https://cloud.google.com/spanner/docs/schema-and-data-model?hl=en#parent-child) していないスキーマ構成。
+# Sample Dataの追加
 
-# Sample Data
+Singers TableとAlbums Tableに1行ずつ追加
 
 ```
 cat ./dml/101_JOIN/sample_data.sql
 spanner-cli -p $CLOUDSDK_CORE_PROJECT -i $CLOUDSDK_SPANNER_INSTANCE -d $DB1 -e "$(cat ./dml/101_JOIN/sample_data.sql)" -t
 ```
+
+Singers TableとAlbums TableのJOINを行うクエリのプロファイルを見る
 
 ``` query1.sql
 EXPLAIN ANALYZE
@@ -47,8 +49,8 @@ optimizer version:    5
 optimizer statistics: auto_20230906_04_27_19UTC
 ```
 
-`2` SingersとAlbumsのJOINは [Distributed Union](https://cloud.google.com/spanner/docs/query-execution-operators?hl=en#distributed-union) で行われる。
-SingerId=1のSingersとAlbumsのRowは同じSplitにあるわけじゃないので、Localでは完結しない。
+`2` SingersとAlbums [Distributed Union](https://cloud.google.com/spanner/docs/query-execution-operators?hl=en#distributed-union) によって複数のSplitから `SingerId=1` のものだけ取り出され、その後、 [Cross Apply](https://cloud.google.com/spanner/docs/query-execution-operators?hl=en#cross-apply) によってJOINされる。
+SingerId=1のSingersとAlbumsのRowは同じSplitにあるとは限らないので、Localでは完結しない。
 
 # Refs
 
