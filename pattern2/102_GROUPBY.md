@@ -1,27 +1,20 @@
-# GROUP BY pattern2
+# GROUP BY
 
-UserごとにAmountを集計するサンプル。
+Orders TableのAmountをUserごとに集計する。
+Orders TableはUsers Tableの子どもなので、PKはUserID, OrderIDとなっている。
 
-# Sample Data
+## Sample Dataの追加
 
-```
-INSERT INTO Users (UserID, UserName, CreatedAt, UpdatedAt) VALUES ("ruby", "ruby", PENDING_COMMIT_TIMESTAMP(), PENDING_COMMIT_TIMESTAMP());
-INSERT INTO Users (UserID, UserName, CreatedAt, UpdatedAt) VALUES ("dia", "dia", PENDING_COMMIT_TIMESTAMP(), PENDING_COMMIT_TIMESTAMP());
-INSERT INTO Users (UserID, UserName, CreatedAt, UpdatedAt) VALUES ("sapphire", "sapphire", PENDING_COMMIT_TIMESTAMP(), PENDING_COMMIT_TIMESTAMP());
-INSERT INTO Users (UserID, UserName, CreatedAt, UpdatedAt) VALUES ("silver", "silver", PENDING_COMMIT_TIMESTAMP(), PENDING_COMMIT_TIMESTAMP());
-INSERT INTO Users (UserID, UserName, CreatedAt, UpdatedAt) VALUES ("gold", "gold", PENDING_COMMIT_TIMESTAMP(), PENDING_COMMIT_TIMESTAMP());
-```
+Users Tableに5行、Orders Tableに6行を追加
 
 ```
-INSERT INTO Orders (UserID, OrderID, Amount, CommitedAt) VALUES ("ruby", "00000005-0543-420d-ae8e-d00cb1c99cc1", 100, PENDING_COMMIT_TIMESTAMP());
-INSERT INTO Orders (UserID, OrderID, Amount, CommitedAt) VALUES ("ruby", "00000694-1c17-4812-93c0-06070df608f5", 100, PENDING_COMMIT_TIMESTAMP());
-INSERT INTO Orders (UserID, OrderID, Amount, CommitedAt) VALUES ("dia", "0001b069-5bbf-4397-bc93-57d6252b1b17", 100, PENDING_COMMIT_TIMESTAMP());
-INSERT INTO Orders (UserID, OrderID, Amount, CommitedAt) VALUES ("sapphire", "00054374-14b6-4bdd-9a04-6b39187465fc", 100, PENDING_COMMIT_TIMESTAMP());
-INSERT INTO Orders (UserID, OrderID, Amount, CommitedAt) VALUES ("silver", "0008c6e2-8278-4d23-9270-4c03a4d54534", 100, PENDING_COMMIT_TIMESTAMP());
-INSERT INTO Orders (UserID, OrderID, Amount, CommitedAt) VALUES ("gold", "000cf780-bdf5-4932-9aac-1fb6cfb893e2", 100, PENDING_COMMIT_TIMESTAMP());
+cat ./dml/102_GROUPBY/sample_data.sql
+spanner-cli -p $CLOUDSDK_CORE_PROJECT -i $CLOUDSDK_SPANNER_INSTANCE -d $DB2 -e "$(cat ./dml/102_GROUPBY/sample_data.sql)" -t
 ```
 
-```
+## UserごとにGROUP BYで集計を行うクエリのプロファイルを見る
+
+``` query1.sql
 EXPLAIN ANALYZE
 SELECT
   UserID,
@@ -33,24 +26,29 @@ GROUP BY
 ```
 
 ```
-+----+------------------------------------------------------------------------------+---------------+------------+---------------+
-| ID | Query_Execution_Plan                                                         | Rows_Returned | Executions | Total_Latency |
-+----+------------------------------------------------------------------------------+---------------+------------+---------------+
-|  0 | Distributed Union (distribution_table: Users, split_ranges_aligned: true)    | 5             | 1          | 3.15 msecs    |
-|  1 | +- Serialize Result                                                          | 5             | 1          | 3.13 msecs    |
-|  2 |    +- Stream Aggregate                                                       | 5             | 1          | 3.13 msecs    |
-|  3 |       +- Local Distributed Union                                             | 4353          | 1          | 2.86 msecs    |
-|  4 |          +- Table Scan (Full scan: true, Table: Orders, scan_method: Scalar) | 4353          | 1          | 2.6 msecs     |
-+----+------------------------------------------------------------------------------+---------------+------------+---------------+
-5 rows in set (7.53 msecs)
-timestamp:            2023-09-15T14:35:53.678128+09:00
-cpu time:             6.77 msecs
-rows scanned:         4353 rows
-deleted rows scanned: 0 rows
-optimizer version:    5
-optimizer statistics: auto_20230906_07_18_51UTC
+spanner-cli -p $CLOUDSDK_CORE_PROJECT -i $CLOUDSDK_SPANNER_INSTANCE -d $DB2 -e "$(cat ./dml/102_GROUPBY/query1.sql)" -t
 ```
 
-PKの先頭にUserIDがあるので、UserごとにOrderはまとまっている。
-そのため、Stream Aggregateで集計ができる。
-Orders TableはUsers Tableの子どもなので、Localで完結している。
+```
++----+---------------------------------------------------------------------------------+---------------+------------+---------------+
+| ID | Query_Execution_Plan                                                            | Rows_Returned | Executions | Total_Latency |
++----+---------------------------------------------------------------------------------+---------------+------------+---------------+
+|  0 | Distributed Union (distribution_table: Users, split_ranges_aligned: true)       | 5             | 1          | 0.1 msecs     |
+|  1 | +- Serialize Result                                                             | 5             | 1          | 0.08 msecs    |
+|  2 |    +- Stream Aggregate                                                          | 5             | 1          | 0.07 msecs    |
+|  3 |       +- Local Distributed Union                                                | 6             | 1          | 0.07 msecs    |
+|  4 |          +- Table Scan (Full scan: true, Table: Orders, scan_method: Automatic) | 6             | 1          | 0.06 msecs    |
++----+---------------------------------------------------------------------------------+---------------+------------+---------------+
+5 rows in set (4.82 msecs)
+timestamp:            2024-02-27T16:08:05.452253+09:00
+cpu time:             3.86 msecs
+rows scanned:         6 rows
+deleted rows scanned: 0 rows
+optimizer version:    6
+optimizer statistics: auto_20240227_05_47_04UTC
+```
+
+PKの先頭にUserIDがあるので、UserごとにOrderはまとまって並んでいる。
+そのため、Stream Aggregateで順次集計ができる。
+Orders TableはUsers Tableの子どもなので、同じUserのOrderは同じマシンにある。
+そのため、Localで完結している。

@@ -1,6 +1,7 @@
 # GROUP BY
 
-UserごとにAmountを集計するサンプル。
+Orders TableのAmountをUserごとに集計する。
+Orders TableのPKはOrderIDになっている。
 
 ## Sample Dataの追加
 
@@ -14,7 +15,6 @@ spanner-cli -p $CLOUDSDK_CORE_PROJECT -i $CLOUDSDK_SPANNER_INSTANCE -d $DB1 -e "
 ## UserごとにGROUP BYで集計を行うクエリのプロファイルを見る
 
 ``` query1.sql
-
 EXPLAIN ANALYZE
 SELECT
   UserID,

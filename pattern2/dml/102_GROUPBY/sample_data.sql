@@ -1,0 +1,11 @@
+INSERT INTO Users (UserID, UserName, CreatedAt, UpdatedAt) VALUES ("ruby", "ruby", PENDING_COMMIT_TIMESTAMP(), PENDING_COMMIT_TIMESTAMP());
+INSERT INTO Users (UserID, UserName, CreatedAt, UpdatedAt) VALUES ("dia", "dia", PENDING_COMMIT_TIMESTAMP(), PENDING_COMMIT_TIMESTAMP());
+INSERT INTO Users (UserID, UserName, CreatedAt, UpdatedAt) VALUES ("sapphire", "sapphire", PENDING_COMMIT_TIMESTAMP(), PENDING_COMMIT_TIMESTAMP());
+INSERT INTO Users (UserID, UserName, CreatedAt, UpdatedAt) VALUES ("silver", "silver", PENDING_COMMIT_TIMESTAMP(), PENDING_COMMIT_TIMESTAMP());
+INSERT INTO Users (UserID, UserName, CreatedAt, UpdatedAt) VALUES ("gold", "gold", PENDING_COMMIT_TIMESTAMP(), PENDING_COMMIT_TIMESTAMP());
+INSERT INTO Orders (UserID, OrderID, Amount, CommitedAt) VALUES ("ruby", "00000005-0543-420d-ae8e-d00cb1c99cc1", 100, PENDING_COMMIT_TIMESTAMP());
+INSERT INTO Orders (UserID, OrderID, Amount, CommitedAt) VALUES ("ruby", "00000694-1c17-4812-93c0-06070df608f5", 100, PENDING_COMMIT_TIMESTAMP());
+INSERT INTO Orders (UserID, OrderID, Amount, CommitedAt) VALUES ("dia", "0001b069-5bbf-4397-bc93-57d6252b1b17", 100, PENDING_COMMIT_TIMESTAMP());
+INSERT INTO Orders (UserID, OrderID, Amount, CommitedAt) VALUES ("sapphire", "00054374-14b6-4bdd-9a04-6b39187465fc", 100, PENDING_COMMIT_TIMESTAMP());
+INSERT INTO Orders (UserID, OrderID, Amount, CommitedAt) VALUES ("silver", "0008c6e2-8278-4d23-9270-4c03a4d54534", 100, PENDING_COMMIT_TIMESTAMP());
+INSERT INTO Orders (UserID, OrderID, Amount, CommitedAt) VALUES ("gold", "000cf780-bdf5-4932-9aac-1fb6cfb893e2", 100, PENDING_COMMIT_TIMESTAMP());
