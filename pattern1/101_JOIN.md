@@ -1,6 +1,9 @@
 # JOIN
 
-# Sample Dataの追加
+Pattern2は [インターリーブ](https://cloud.google.com/spanner/docs/schema-and-data-model?hl=en#parent-child) していないスキーマ構成。
+Albums TableはSingers TableはSingerIdで繋げることができるが、Spannerから見ると関連性はない。
+
+## Sample Dataの追加
 
 Singers TableとAlbums Tableに1行ずつ追加
 
@@ -8,6 +11,8 @@ Singers TableとAlbums Tableに1行ずつ追加
 cat ./dml/101_JOIN/sample_data.sql
 spanner-cli -p $CLOUDSDK_CORE_PROJECT -i $CLOUDSDK_SPANNER_INSTANCE -d $DB1 -e "$(cat ./dml/101_JOIN/sample_data.sql)" -t
 ```
+
+## JOINするクエリのプロファイルを見る
 
 Singers TableとAlbums TableのJOINを行うクエリのプロファイルを見る
 

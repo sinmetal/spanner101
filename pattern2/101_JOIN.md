@@ -1,16 +1,22 @@
-# インターリーブ比較体験
+# JOIN
 
 Pattern2は [インターリーブ](https://cloud.google.com/spanner/docs/schema-and-data-model?hl=en#parent-child) しているスキーマ構成。
 Albums TableはSingers Tableの子ども。
 
-# Sample Data
+## Sample Dataの追加
+
+Singers TableとAlbums Tableに1行ずつ追加
 
 ```
-INSERT INTO Singers (SingerId, FirstName, LastName) VALUES (1, "Nick", "Porter");
-INSERT INTO Albums (SingerId, AlbumId, Title) VALUES (1, 1, "Total Junk"), (1, 2, "Nice Field");
+cat ./dml/101_JOIN/sample_data.sql
+spanner-cli -p $CLOUDSDK_CORE_PROJECT -i $CLOUDSDK_SPANNER_INSTANCE -d $DB2 -e "$(cat ./dml/101_JOIN/sample_data.sql)" -t
 ```
 
-```
+## JOINするクエリのプロファイルを見る
+
+Singers TableとAlbums TableのJOINを行うクエリのプロファイルを見る
+
+``` query1.sql
 EXPLAIN ANALYZE
 SELECT * FROM Singers s
 INNER JOIN Albums a ON s.SingerId = a.SingerId
@@ -18,7 +24,7 @@ WHERE s.SingerId = 1;
 ```
 
 ```
-spanner-cli -p gcpug-public-spanner -i merpay-sponsored-instance -d $DB2 -e "$(cat query.sql)" -t
+spanner-cli -p $CLOUDSDK_CORE_PROJECT -i $CLOUDSDK_SPANNER_INSTANCE -d $DB2 -e "$(cat ./dml/101_JOIN/query1.sql)" -t
 +-----+-----------------------------------------------------------------------------+---------------+------------+---------------+
 | ID  | Query_Execution_Plan                                                        | Rows_Returned | Executions | Total_Latency |
 +-----+-----------------------------------------------------------------------------+---------------+------------+---------------+
@@ -47,6 +53,8 @@ optimizer statistics: auto_20230906_07_18_51UTC
 ```
 
 インターリーブしてないPattern1と比べてSingersとAlbumsをJOINする部分がLocalで完結するようになっています。
+複数のマシンで実行されるものは [Distributed operators](https://cloud.google.com/spanner/docs/query-execution-operators?hl=en#distributed_operators) ですが、 [Cross Apply](https://cloud.google.com/spanner/docs/query-execution-operators?hl=en#cross-apply) の下にはありません。
+インターリーブを組むことで、JOINを単一マシンで完結させることができています。
 
 # Refs
 
