@@ -53,13 +53,12 @@ CREATE INDEX UserIDStoredAmountAndPointByUserDepositHistories
 
 CREATE TABLE Orders
 (
-    OrderID    STRING(64) NOT NULL,
     UserID     STRING(64) NOT NULL,
+    OrderID    STRING(64) NOT NULL,
     Amount     INT64     NOT NULL,
     CommitedAt TIMESTAMP NOT NULL OPTIONS (allow_commit_timestamp= true),
-) PRIMARY KEY (OrderID),
+) PRIMARY KEY (UserID, OrderID),
   ROW DELETION POLICY (OLDER_THAN(CommitedAt, INTERVAL 90 DAY));
-
 
 CREATE INDEX UserIDAndCommitedAtDescByOrders
     ON Orders (
