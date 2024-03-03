@@ -83,5 +83,5 @@ func HelloHandler(w http.ResponseWriter, r *http.Request) {
 		name = "World"
 	}
 	fmt.Println("Hello Log")
-	fmt.Fprintf(w, "Hello %s!\n", name)
+	fmt.Fprintf(w, "Hello %s!!!\n", name)
 }
