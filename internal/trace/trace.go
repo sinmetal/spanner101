@@ -54,6 +54,7 @@ func init() {
 			log.Fatalf("resource.New: %v", err)
 		}
 		tp := sdktrace.NewTracerProvider(
+			sdktrace.WithSampler(sdktrace.AlwaysSample()), // 1min間に1requestなので、全部出している
 			sdktrace.WithBatcher(exporter),
 			sdktrace.WithResource(res),
 		)
