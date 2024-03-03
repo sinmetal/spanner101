@@ -17,7 +17,7 @@ import (
 func main() {
 	ctx := context.Background()
 
-	fmt.Print("starting server...")
+	fmt.Println("starting server...")
 
 	database1 := os.Getenv("SPANNER_DATABASE1")
 	sc1, err := spanner.NewClient(ctx, database1)
