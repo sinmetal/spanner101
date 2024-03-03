@@ -31,3 +31,4 @@ steps:
       - --set-env-vars=SPANNER_DATABASE1=projects/gcpug-public-spanner/instances/merpay-sponsored-instance/databases/sinmetal1
       - --set-env-vars=SPANNER_DATABASE2=projects/gcpug-public-spanner/instances/merpay-sponsored-instance/databases/sinmetal2
       - --set-env-vars=SPANNER_DATABASE3=projects/gcpug-public-spanner/instances/merpay-sponsored-instance/databases/sinmetal3
+      - --set-env-vars=GOOGLE_API_GO_EXPERIMENTAL_TELEMETRY_PLATFORM_TRACING=opentelemetry

@@ -22,6 +22,7 @@ var tracer trace.Tracer
 
 func init() {
 	ctx := context.Background()
+	log.Println("trace init()")
 
 	if metadata.OnGCE() {
 		projectID, err := metadata.ProjectID()
@@ -72,6 +73,7 @@ func init() {
 
 	}
 	if tracer == nil {
+		log.Println("set default otel tracer")
 		tracer = otel.Tracer("github.com/sinmetal/spanner-hands-on")
 	}
 }
