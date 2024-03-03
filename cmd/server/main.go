@@ -16,7 +16,8 @@ import (
 
 func main() {
 	ctx := context.Background()
-	log.Print("starting server...")
+
+	fmt.Print("starting server...")
 
 	database1 := os.Getenv("SPANNER_DATABASE1")
 	sc1, err := spanner.NewClient(ctx, database1)
@@ -64,11 +65,11 @@ func main() {
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
-		log.Printf("defaulting to port %s", port)
+		fmt.Printf("defaulting to port %s", port)
 	}
 
 	// Start HTTP server.
-	log.Printf("listening on port %s", port)
+	fmt.Printf("listening on port %s", port)
 	if err := http.ListenAndServe(":"+port, otelhttp.NewHandler(mux, "server",
 		otelhttp.WithMessageEvents(otelhttp.ReadEvents, otelhttp.WriteEvents),
 	)); err != nil {
