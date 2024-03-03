@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"os"
 
-	"cloud.google.com/go/compute/metadata"
 	"cloud.google.com/go/spanner"
 	stores1 "github.com/sinmetal/spanner101/pattern1/stores"
 	stores2 "github.com/sinmetal/spanner101/pattern2/stores"
@@ -18,10 +17,6 @@ import (
 func main() {
 	ctx := context.Background()
 	log.Print("starting server...")
-
-	if metadata.OnGCE() {
-		spanner.EnableOpenTelemetryMetrics()
-	}
 
 	database1 := os.Getenv("SPANNER_DATABASE1")
 	sc1, err := spanner.NewClient(ctx, database1)
