@@ -7,15 +7,21 @@ import (
 	"net/http"
 	"os"
 
+	"cloud.google.com/go/compute/metadata"
 	"cloud.google.com/go/spanner"
 	stores1 "github.com/sinmetal/spanner101/pattern1/stores"
 	stores2 "github.com/sinmetal/spanner101/pattern2/stores"
 	stores3 "github.com/sinmetal/spanner101/pattern3/stores"
+	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 )
 
 func main() {
 	ctx := context.Background()
 	log.Print("starting server...")
+
+	if metadata.OnGCE() {
+		spanner.EnableOpenTelemetryMetrics()
+	}
 
 	database1 := os.Getenv("SPANNER_DATABASE1")
 	sc1, err := spanner.NewClient(ctx, database1)
@@ -52,8 +58,10 @@ func main() {
 		OrdersStore2: ordersStore2,
 		OrdersStore3: ordersStore3,
 	}
-	http.HandleFunc("/insert", handlers.Insert)
-	http.HandleFunc("/", HelloHandler)
+
+	mux := http.NewServeMux()
+	mux.HandleFunc("/insert", handlers.Insert)
+	mux.HandleFunc("/", HelloHandler)
 
 	// TODO Shutdown処理
 
@@ -66,7 +74,9 @@ func main() {
 
 	// Start HTTP server.
 	log.Printf("listening on port %s", port)
-	if err := http.ListenAndServe(":"+port, nil); err != nil {
+	if err := http.ListenAndServe(":"+port, otelhttp.NewHandler(mux, "server",
+		otelhttp.WithMessageEvents(otelhttp.ReadEvents, otelhttp.WriteEvents),
+	)); err != nil {
 		log.Fatal(err)
 	}
 }
