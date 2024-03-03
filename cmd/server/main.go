@@ -82,5 +82,6 @@ func HelloHandler(w http.ResponseWriter, r *http.Request) {
 	if name == "" {
 		name = "World"
 	}
+	fmt.Println("Hello Log")
 	fmt.Fprintf(w, "Hello %s!\n", name)
 }
