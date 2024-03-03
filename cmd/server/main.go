@@ -56,7 +56,7 @@ func main() {
 	}
 
 	mux := http.NewServeMux()
-	mux.Handle("/insert", otelhttp.WithRouteTag("/insert", http.HandlerFunc(handlers.Insert)))
+	mux.Handle("/insert", otelhttp.NewHandler(http.HandlerFunc(handlers.Insert), "/insert"))
 	mux.HandleFunc("/", HelloHandler)
 
 	// TODO Shutdown処理
