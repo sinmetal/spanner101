@@ -7,7 +7,9 @@ import (
 
 	"cloud.google.com/go/compute/metadata"
 	"cloud.google.com/go/spanner"
+	"contrib.go.opencensus.io/exporter/stackdriver"
 	texporter "github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace"
+	censustrace "go.opencensus.io/trace"
 	"go.opentelemetry.io/contrib/detectors/gcp"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/sdk/resource"
@@ -56,6 +58,18 @@ func init() {
 		// TODO Shutdownはどうやろう？ defer tp.Shutdown(ctx) // flushes any pending spans, and closes connections.
 		otel.SetTracerProvider(tp)
 		tracer = otel.GetTracerProvider().Tracer("github.com/sinmetal/spanner-hands-on")
+
+		// Create and register a OpenCensus Stackdriver Trace exporter.
+		{
+			exporter, err := stackdriver.NewExporter(stackdriver.Options{
+				ProjectID: projectID,
+			})
+			if err != nil {
+				log.Fatal(err)
+			}
+			censustrace.RegisterExporter(exporter)
+		}
+
 	}
 	if tracer == nil {
 		tracer = otel.Tracer("github.com/sinmetal/spanner-hands-on")
