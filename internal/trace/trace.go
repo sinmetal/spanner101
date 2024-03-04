@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"log"
 
-	"cloud.google.com/go/compute/metadata"
 	"cloud.google.com/go/spanner"
 	texporter "github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace"
+	metadatabox "github.com/sinmetalcraft/gcpbox/metadata/cloudrun"
 	"go.opentelemetry.io/contrib/detectors/gcp"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/sdk/resource"
@@ -24,10 +24,20 @@ func init() {
 	ctx := context.Background()
 	fmt.Println("trace init()")
 
-	if metadata.OnGCE() {
-		projectID, err := metadata.ProjectID()
+	if metadatabox.OnCloudRun() {
+		projectID, err := metadatabox.ProjectID()
 		if err != nil {
 			log.Fatalf("required google cloud project id: %v", err)
+		}
+
+		runService, err := metadatabox.Service()
+		if err != nil {
+			log.Fatalf("required cloud run service: %v", err)
+		}
+
+		revision, err := metadatabox.Revision()
+		if err != nil {
+			log.Fatalf("required cloud run revision: %v", err)
 		}
 
 		spanner.EnableOpenTelemetryMetrics()
@@ -48,8 +58,8 @@ func init() {
 			resource.WithTelemetrySDK(),
 			// Add your own custom attributes to identify your application
 			resource.WithAttributes(
-				semconv.ServiceNameKey.String("spanner-hands-on"),
-				semconv.ServiceVersion("0.1.0"),
+				semconv.ServiceNameKey.String(fmt.Sprintf("spanner-hands-on/%s", runService)),
+				semconv.ServiceVersion(revision),
 			),
 		)
 		if errors.Is(err, resource.ErrPartialResource) || errors.Is(err, resource.ErrSchemaURLConflict) {
