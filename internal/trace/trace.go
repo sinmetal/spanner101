@@ -15,6 +15,7 @@ import (
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	semconv "go.opentelemetry.io/otel/semconv/v1.24.0"
 	"go.opentelemetry.io/otel/trace"
+	"google.golang.org/api/option"
 )
 
 var tracer trace.Tracer
@@ -31,7 +32,12 @@ func init() {
 
 		spanner.EnableOpenTelemetryMetrics()
 
-		exporter, err := texporter.New(texporter.WithProjectID(projectID))
+		exporter, err := texporter.New(
+			texporter.WithProjectID(projectID),
+			texporter.WithTraceClientOptions(
+				[]option.ClientOption{option.WithTelemetryDisabled()}, // otelのtrace送信そのもののtraceは送らない
+			),
+		)
 		if err != nil {
 			log.Fatalf("texporter.New: %v", err)
 		}
