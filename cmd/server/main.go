@@ -70,9 +70,7 @@ func main() {
 
 	// Start HTTP server.
 	fmt.Printf("listening on port %s", port)
-	if err := http.ListenAndServe(":"+port, otelhttp.NewHandler(mux, "server",
-		otelhttp.WithMessageEvents(otelhttp.ReadEvents, otelhttp.WriteEvents),
-	)); err != nil {
+	if err := http.ListenAndServe(":"+port, mux); err != nil {
 		log.Fatal(err)
 	}
 }
