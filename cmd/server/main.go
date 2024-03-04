@@ -11,11 +11,13 @@ import (
 	stores1 "github.com/sinmetal/spanner101/pattern1/stores"
 	stores2 "github.com/sinmetal/spanner101/pattern2/stores"
 	stores3 "github.com/sinmetal/spanner101/pattern3/stores"
+	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 )
 
 func main() {
 	ctx := context.Background()
-	log.Print("starting server...")
+
+	fmt.Println("starting server...")
 
 	database1 := os.Getenv("SPANNER_DATABASE1")
 	sc1, err := spanner.NewClient(ctx, database1)
@@ -52,8 +54,10 @@ func main() {
 		OrdersStore2: ordersStore2,
 		OrdersStore3: ordersStore3,
 	}
-	http.HandleFunc("/insert", handlers.Insert)
-	http.HandleFunc("/", HelloHandler)
+
+	mux := http.NewServeMux()
+	mux.Handle("/insert", otelhttp.NewHandler(http.HandlerFunc(handlers.Insert), "/insert"))
+	mux.HandleFunc("/", HelloHandler)
 
 	// TODO Shutdown処理
 
@@ -61,12 +65,12 @@ func main() {
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
-		log.Printf("defaulting to port %s", port)
+		fmt.Printf("defaulting to port %s", port)
 	}
 
 	// Start HTTP server.
-	log.Printf("listening on port %s", port)
-	if err := http.ListenAndServe(":"+port, nil); err != nil {
+	fmt.Printf("listening on port %s", port)
+	if err := http.ListenAndServe(":"+port, mux); err != nil {
 		log.Fatal(err)
 	}
 }
@@ -76,5 +80,6 @@ func HelloHandler(w http.ResponseWriter, r *http.Request) {
 	if name == "" {
 		name = "World"
 	}
-	fmt.Fprintf(w, "Hello %s!\n", name)
+	fmt.Println("Hello Log")
+	fmt.Fprintf(w, "Hello %s!!!\n", name)
 }
