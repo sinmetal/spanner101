@@ -8,9 +8,11 @@ import (
 
 	"cloud.google.com/go/spanner"
 	texporter "github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace"
+	gcppropagator "github.com/GoogleCloudPlatform/opentelemetry-operations-go/propagator"
 	metadatabox "github.com/sinmetalcraft/gcpbox/metadata/cloudrun"
 	"go.opentelemetry.io/contrib/detectors/gcp"
 	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/propagation"
 	"go.opentelemetry.io/otel/sdk/resource"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	semconv "go.opentelemetry.io/otel/semconv/v1.24.0"
@@ -25,6 +27,8 @@ func init() {
 	fmt.Println("trace init()")
 
 	if metadatabox.OnCloudRun() {
+		installPropagators()
+
 		projectID, err := metadatabox.ProjectID()
 		if err != nil {
 			log.Fatalf("required google cloud project id: %v", err)
@@ -80,6 +84,17 @@ func init() {
 		fmt.Println("set default otel tracer")
 		tracer = otel.Tracer("github.com/sinmetal/spanner-hands-on")
 	}
+}
+
+func installPropagators() {
+	otel.SetTextMapPropagator(
+		propagation.NewCompositeTextMapPropagator(
+			// Putting the CloudTraceOneWayPropagator first means the TraceContext propagator
+			// takes precedence if both the traceparent and the XCTC headers exist.
+			gcppropagator.CloudTraceOneWayPropagator{},
+			propagation.TraceContext{},
+			propagation.Baggage{},
+		))
 }
 
 func StartSpan(ctx context.Context, spanName string, ops ...trace.SpanStartOption) (context.Context, trace.Span) {
