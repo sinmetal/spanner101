@@ -1,13 +1,14 @@
-# DataBoost Pattern2
+# DataBoost
 
 https://cloud.google.com/spanner/docs/databoost/databoost-overview
 
 BigQueryからDataBoostを利用して [Federated Query](https://cloud.google.com/bigquery/docs/cloud-spanner-federated-queries) を実行する。
-SpannerとBigQueryは同じRegionである必要がある点に注意。
 
 ```
-bq mk --project_id gcpug-public-spanner --connection --connection_type='CLOUD_SPANNER' --location='us-central1' \
---properties='{"database":"projects/gcpug-public-spanner/instances/merpay-sponsored-instance/databases/sinmetal2", "useParallelism":true, "useDataBoost": true}' spanner_sinmetal2
+properties2=$(echo '{"database":"projects/'$CLOUDSDK_CORE_PROJECT'/instances/'$CLOUDSDK_SPANNER_INSTANCE'/databases/'$DB2'", "useParallelism":true, "useDataBoost": true}')
+connection_name2=$(printf "spanner_%s_%s" $CLOUDSDK_SPANNER_INSTANCE $DB2)
+bq mk --project_id $CLOUDSDK_CORE_PROJECT --connection --connection_type='CLOUD_SPANNER' --location='us-central1' \
+--properties=$properties $connection_name2
 ```
 
 # JOIN
@@ -15,9 +16,11 @@ bq mk --project_id gcpug-public-spanner --connection --connection_type='CLOUD_SP
 Usersの子どもとしてOrdersがインターリーブされているので、JOINする時に同じPartitionで完結できる
 
 ```
+bq query --use_legacy_sql=false << EOS
 SELECT * FROM EXTERNAL_QUERY(
-  'gcpug-public-spanner.us-central1.spanner_sinmetal2',
+  '$CLOUDSDK_CORE_PROJECT.us-central1.$connection_name2',
   'SELECT Users.UserID,Orders.OrderID FROM Users JOIN Orders ON Users.UserID = Orders.UserID') AS UserOrders
+EOS
 ```
 
 # Memo
