@@ -75,6 +75,7 @@ func init() {
 	}
 	if meterProvider == nil {
 		// meterProvider = getOtlpMeterProvider(ctx, res)
+		fmt.Println("not set meterProvider")
 	}
 }
 
