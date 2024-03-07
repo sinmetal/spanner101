@@ -1,18 +1,18 @@
 # GROUP BY
 
-Aggregate the amount of Orders Table for each User.
-Orders Table is a child of Users Table, so PK is UserID, OrderID.
+Orders TableのAmountをUserごとに集計する。
+Orders TableはUsers Tableの子どもなので、PKはUserID, OrderIDとなっている。
 
-## Add Sample Data
+## Sample Dataの追加
 
-Add 5 rows to Users Table and 6 rows to Orders Table
+Users Tableに5行、Orders Tableに6行を追加
 
-````
+```
 cat ./dml/102_GROUPBY/sample_data.sql
 spanner-cli -p $CLOUDSDK_CORE_PROJECT -i $CLOUDSDK_SPANNER_INSTANCE -d $DB2 -e "$(cat ./dml/102_GROUPBY/sample_data.sql)" -t
-````
+```
 
-## View the profile of a query that aggregates with GROUP BY for each User
+## UserごとにGROUP BYで集計を行うクエリのプロファイルを見る
 
 ``` query1.sql
 EXPLAIN ANALYZE
@@ -48,7 +48,7 @@ optimizer version:    6
 optimizer statistics: auto_20240227_05_47_04UTC
 ```
 
-Since the UserID is at the beginning of the PK, the Orders are grouped together for each User.
-Therefore, sequential aggregation is possible with Stream Aggregate.
-Orders Table is a child of Users Table, so Orders for the same User are on the same machine.
-Therefore, it is completed locally.
+PKの先頭にUserIDがあるので、UserごとにOrderはまとまって並んでいる。
+そのため、Stream Aggregateで順次集計ができる。
+Orders TableはUsers Tableの子どもなので、同じUserのOrderは同じマシンにある。
+そのため、Localで完結している。

@@ -1,20 +1,20 @@
 # JOIN
 
-Pattern2 is a schema structure that is [interleaved](https://cloud.google.com/spanner/docs/schema-and-data-model?hl=en#parent-child).
-Albums Table is the child of Singers Table.
+Pattern2は [インターリーブ](https://cloud.google.com/spanner/docs/schema-and-data-model?hl=en#parent-child) しているスキーマ構成。
+Albums TableはSingers Tableの子ども。
 
-## Add Sample Data
+## Sample Dataの追加
 
-Add one row to the Singers Table and Albums Table
+Singers TableとAlbums Tableに1行ずつ追加
 
-````
+```
 cat ./dml/101_JOIN/sample_data.sql
 spanner-cli -p $CLOUDSDK_CORE_PROJECT -i $CLOUDSDK_SPANNER_INSTANCE -d $DB2 -e "$(cat ./dml/101_JOIN/sample_data.sql)" -t
-````
+```
 
-## View the profile of the query to join
+## JOINするクエリのプロファイルを見る
 
-View the profile of a query that performs a JOIN between Singers Table and Albums Table
+Singers TableとAlbums TableのJOINを行うクエリのプロファイルを見る
 
 ``` query1.sql
 EXPLAIN ANALYZE
@@ -52,9 +52,9 @@ optimizer version:    5
 optimizer statistics: auto_20230906_07_18_51UTC
 ```
 
-Compared to Pattern 1, which is not interleaved, the part that joins Singers and Albums is completed locally.
-The ones that run on multiple machines are [Distributed operators](https://cloud.google.com/spanner/docs/query-execution-operators?hl=en#distributed_operators), but [Cross Apply](https: //cloud.google.com/spanner/docs/query-execution-operators?hl=en#cross-apply).
-By using interleaving, we are able to complete the JOIN on a single machine.
+インターリーブしてないPattern1と比べてSingersとAlbumsをJOINする部分がLocalで完結するようになっています。
+複数のマシンで実行されるものは [Distributed operators](https://cloud.google.com/spanner/docs/query-execution-operators?hl=en#distributed_operators) ですが、 [Cross Apply](https://cloud.google.com/spanner/docs/query-execution-operators?hl=en#cross-apply) の下にはありません。
+インターリーブを組むことで、JOINを単一マシンで完結させることができています。
 
 # Refs
 

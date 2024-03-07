@@ -1,18 +1,18 @@
-#INDEX
+# INDEX
 
-Get the data of the specified User from the Orders Table.
+Orders Tableから指定したUserのデータを取得する。
 
-## Add Sample Data
+## Sample Dataの追加
 
-Added 8 rows to Orders Table.
-If you have not added sample data for 102_GROUPBY, add sample data for 102_GROUPBY first.
+Orders Tableに8行追加。
+102_GROUPBYのサンプルデータを追加していない場合、先に102_GROUPBYのサンプルデータを追加してから行う。
 
-````
+```
 cat ./dml/103_INDEX/sample_data.sql
 spanner-cli -p $CLOUDSDK_CORE_PROJECT -i $CLOUDSDK_SPANNER_INSTANCE -d $DB2 -e "$(cat ./dml/103_INDEX/sample_data.sql)" -t
-````
+```
 
-## View the profile of the query that retrieves data for the specified User from the Orders Table
+## Orders Tableから指定したUserのデータを取得するクエリのプロファイルを見る
 
 ``` query1.sql
 EXPLAIN ANALYZE
@@ -55,10 +55,10 @@ optimizer version:    6
 optimizer statistics: auto_20240227_05_47_04UTC
 ```
 
-I want 5 items, but I have scanned 10 items.
-Currently, there are only 10 relevant rows in the table, so the load is low, but I'm worried if the number increases.
-Compared to pattern 1, `Sort Limit` is located immediately after Local Distributed Union, so Sort and Limit can be completed on one machine.
-The following INDEX has been created, but it is not used.
+欲しいのは5件だが、10件Scanしている。
+今はTableに該当の行が10件しかないので、負荷が低いが、数が増えると不安がある。
+pattern1と比べると `Sort Limit` がLocal Distributed Unionのすぐ後にあるので、1つのマシンでSort, Limitが完結できている。
+以下のINDEXを作成しているが、利用されていない。
 
 ```
 CREATE INDEX UserIDAndCommitedAtDescParentUsersByOrders
@@ -68,16 +68,16 @@ CREATE INDEX UserIDAndCommitedAtDescParentUsersByOrders
     ), INTERLEAVE IN Users;
 ```
 
-Possible reasons for not using INDEX are as follows:
+INDEXを利用しなかった理由として考えられるのは以下
 
-* There is no `Amount` Column, so you need to JOIN with Base Table
+* `Amount` Columnがないので、Base TableとJOINする必要がある
 
-## Add INDEX with STROING Amount
+## AmountをSTROINGしたINDEXを追加する
 
-If you include the `Amount` Column in the INDEX Table, there is no need to JOIN with the Base Table.
-Let's [STORING](https://cloud.google.com/spanner/docs/secondary-indexes#storing-clause) the `Amount` Column.
-STORING will increase the Storage Size of INDEX, so add it as necessary.
-In this case, there is a possibility that the load will increase as the number of cases increases, so there is room for consideration.
+`Amount` ColumnをINDEX Tableに含めればBase TableとのJOINは必要なくなる。
+`Amount` Column を [STORING](https://cloud.google.com/spanner/docs/secondary-indexes#storing-clause) してみよう。
+STORINGするとINDEXのStorage Sizeが増えるので、必要に応じて追加しよう。
+今回のケースは件数が多くなると負荷が上がっていく可能性があるので、検討の余地がある。
 
 ``` create-index1.sql
 CREATE INDEX UserIDAndCommitedAtDescStoringAmountParentUsersByOrders
@@ -91,7 +91,7 @@ ON Orders (
 spanner-cli -p $CLOUDSDK_CORE_PROJECT -i $CLOUDSDK_SPANNER_INSTANCE -d $DB2 -e "$(cat ./dml/103_INDEX/create-index1.sql)" -t
 ```
 
-## Look again at the profile of the query that retrieves data for the specified User from the Orders Table
+## Orders Tableから指定したUserのデータを取得するクエリのプロファイルを再度見る
 
 ```
 spanner-cli -p $CLOUDSDK_CORE_PROJECT -i $CLOUDSDK_SPANNER_INSTANCE -d $DB2 -e "$(cat ./dml/103_INDEX/query1.sql)" -t
@@ -121,5 +121,5 @@ optimizer version:    6
 optimizer statistics: auto_20240227_05_47_04UTC
 ```
 
-Since the necessary columns are now available just by referencing the Index Table, JOIN with the Base Table is no longer necessary.
-Compared to pattern 1, `Global Limit` comes immediately after `Local Distributed Union`, so Limit can be completed on one machine.
+Index Tableさえ参照すれば必要なColumnが揃うようになったので、Base TableとのJOINは必要なくなった。
+pattern1と比べると `Global Limit` が `Local Distributed Union` のすぐ後に来ているので、1つのマシンでLimitが完結できている。

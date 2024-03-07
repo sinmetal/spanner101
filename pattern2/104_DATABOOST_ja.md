@@ -2,7 +2,7 @@
 
 https://cloud.google.com/spanner/docs/databoost/databoost-overview
 
-Execute [Federated Query](https://cloud.google.com/bigquery/docs/cloud-spanner-federated-queries) using DataBoost from BigQuery.
+BigQueryからDataBoostを利用して [Federated Query](https://cloud.google.com/bigquery/docs/cloud-spanner-federated-queries) を実行する。
 
 ```
 properties2=$(echo '{"database":"projects/'$CLOUDSDK_CORE_PROJECT'/instances/'$CLOUDSDK_SPANNER_INSTANCE'/databases/'$DB2'", "useParallelism":true, "useDataBoost": true}')
@@ -13,7 +13,7 @@ bq mk --project_id $CLOUDSDK_CORE_PROJECT --connection --connection_type='CLOUD_
 
 # JOIN
 
-Since Orders are interleaved as children of Users, they can be completed in the same Partition when joining.
+Usersの子どもとしてOrdersがインターリーブされているので、JOINする時に同じPartitionで完結できる
 
 ```
 bq query --use_legacy_sql=false << EOS
@@ -25,10 +25,10 @@ EOS
 
 # Memo
 
-miscellaneous notes from sinmetal
+sinmetalの雑多なメモ
 
-If it is an INDEX that is interleaved with Users, it can be executed even if it is referenced by DataBoost.
-However, since a query like the one below results in a Residual Condition, it doesn't contribute much to lowering the processing load, so wouldn't it be better to just do a Table Full Scan? Maybe it feels like that?
+UsersにインターリーブしているINDEXであれば、DataBoostで参照していても実行可能。
+ただ、以下のようなクエリだとResidual Conditionになるので、処理の負荷を下げるのにさほど寄与しなくて、Table Full Scanすれば良いんじゃないか？って感じかも？
 
 ```
 SELECT * FROM EXTERNAL_QUERY(
