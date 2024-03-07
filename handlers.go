@@ -1,10 +1,11 @@
-package main
+package spanner101
 
 import (
 	"encoding/json"
 	"fmt"
 	"math/rand"
 	"net/http"
+	"os"
 	"time"
 
 	"cloud.google.com/go/spanner"
@@ -102,4 +103,13 @@ func (h *Handlers) Insert(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewEncoder(w).Encode(results); err != nil {
 		fmt.Println(err)
 	}
+}
+
+func HelloHandler(w http.ResponseWriter, r *http.Request) {
+	name := os.Getenv("NAME")
+	if name == "" {
+		name = "World"
+	}
+	fmt.Println("Hello Log")
+	fmt.Fprintf(w, "Hello %s!!!\n", name)
 }
