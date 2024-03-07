@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"cloud.google.com/go/spanner"
+	"github.com/sinmetal/spanner101/internal/trace"
 )
 
 type OrdersStore struct {
@@ -65,7 +66,15 @@ func (s *OrdersStore) OrderDetailsTableName() string {
 	return "OrderDetails"
 }
 
-func (s *OrdersStore) Insert(ctx context.Context, userID string, orderID string, details []*OrderDetail) (time.Time, error) {
+func (s *OrdersStore) Insert(ctx context.Context, userID string, orderID string, details []*OrderDetail) (commitTimestamp time.Time, err error) {
+	ctx, span := trace.StartSpan(ctx, "pattern2.OrdersStore.Insert")
+	defer func() {
+		if err != nil {
+			span.RecordError(err)
+		}
+		span.End()
+	}()
+
 	var ms = make([]*spanner.Mutation, len(details)+1)
 	var amount int64
 	for i, detail := range details {
@@ -80,7 +89,7 @@ func (s *OrdersStore) Insert(ctx context.Context, userID string, orderID string,
 	}
 	ms[0] = spanner.InsertMap(s.OrderTableName(), order.ToInsertMap())
 
-	commitTimestamp, err := s.sc.ReadWriteTransaction(ctx, func(ctx context.Context, tx *spanner.ReadWriteTransaction) error {
+	commitTimestamp, err = s.sc.ReadWriteTransaction(ctx, func(ctx context.Context, tx *spanner.ReadWriteTransaction) error {
 		return tx.BufferWrite(ms)
 	})
 	if err != nil {
