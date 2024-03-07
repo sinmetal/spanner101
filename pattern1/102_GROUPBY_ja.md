@@ -1,18 +1,18 @@
 # GROUP BY
 
-Aggregate the amount of Orders Table for each User.
-The PK of the Orders Table is OrderID.
+Orders TableのAmountをUserごとに集計する。
+Orders TableのPKはOrderIDになっている。
 
 ## Sample Dataの追加
 
-Add 5 rows to Users Table and 6 rows to Orders Table
+Users Tableに5行、Orders Tableに6行を追加
 
 ```
 cat ./dml/102_GROUPBY/sample_data.sql
 spanner-cli -p $CLOUDSDK_CORE_PROJECT -i $CLOUDSDK_SPANNER_INSTANCE -d $DB1 -e "$(cat ./dml/102_GROUPBY/sample_data.sql)" -t
 ```
 
-## View the profile of a query that aggregates by GROUP BY for each user
+## UserごとにGROUP BYで集計を行うクエリのプロファイルを見る
 
 ``` query1.sql
 EXPLAIN ANALYZE
@@ -49,6 +49,6 @@ optimizer version:    6
 optimizer statistics: auto_20240226_09_13_34UTC
 ```
 
-`Hash Aggregate` is introduced for GROUP BY.
-`Local Hash Aggregate` -> `Distributed Union` -> `Global Hash Aggregate`, so after aggregating on each machine, they are collected and aggregated again.
-In this example, there are only 5 types of UserID, so it can be completed quickly, but if there are many users, it will be difficult to create a Hash Table and tally it.
+GROUP BYのために `Hash Aggregate` が登場。
+`Local Hash Aggregate` -> `Distributed Union` -> `Global Hash Aggregate` となっているので、各マシンで集計後、それらを集めて、再度集計している。
+この例だとUserIDの種類が5つしかないので、すぐ終わっているが、Userが多いとHash Table作って集計するのが大変になる。

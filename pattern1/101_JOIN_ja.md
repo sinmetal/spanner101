@@ -1,20 +1,20 @@
 # JOIN
 
-Pattern2 is a schema configuration that is not [interleaved](https://cloud.google.com/spanner/docs/schema-and-data-model?hl=en#parent-child).
-Albums Table and Singers Table can be connected by SingerId, but from Spanner's perspective, there is no relationship.
+Pattern2は [インターリーブ](https://cloud.google.com/spanner/docs/schema-and-data-model?hl=en#parent-child) していないスキーマ構成。
+Albums TableはSingers TableはSingerIdで繋げることができるが、Spannerから見ると関連性はない。
 
-## Add sample data
+## Sample Dataの追加
 
-Add one row to the Singers Table and Albums Table
+JOINするクエリのプロファイルを見る
 
 ```
 cat ./dml/101_JOIN/sample_data.sql
 spanner-cli -p $CLOUDSDK_CORE_PROJECT -i $CLOUDSDK_SPANNER_INSTANCE -d $DB1 -e "$(cat ./dml/101_JOIN/sample_data.sql)" -t
 ```
 
-## View the profile of the query to join
+## JOINするクエリのプロファイルを見る
 
-View the profile of a query that performs a JOIN between Singers Table and Albums Table
+Singers TableとAlbums TableのJOINを行うクエリのプロファイルを見る
 
 ``` query1.sql
 EXPLAIN ANALYZE
@@ -54,8 +54,8 @@ optimizer version:    5
 optimizer statistics: auto_20230906_04_27_19UTC
 ```
 
-`2` Singers and Albums [Distributed Union](https://cloud.google.com/spanner/docs/query-execution-operators?hl=en#distributed-union) from multiple Splits with `SingerId=1` Only things are retrieved and then JOINed by [Cross Apply](https://cloud.google.com/spanner/docs/query-execution-operators?hl=en#cross-apply).
-The Singers and Albums Rows with SingerId=1 are not necessarily in the same Split, so they cannot be completed in Local.
+`2` SingersとAlbums [Distributed Union](https://cloud.google.com/spanner/docs/query-execution-operators?hl=en#distributed-union) によって複数のSplitから `SingerId=1` のものだけ取り出され、その後、 [Cross Apply](https://cloud.google.com/spanner/docs/query-execution-operators?hl=en#cross-apply) によってJOINされる。
+SingerId=1のSingersとAlbumsのRowは同じSplitにあるとは限らないので、Localでは完結しない。
 
 # Refs
 

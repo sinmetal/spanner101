@@ -1,12 +1,12 @@
 # Pattern1
 
-Pattern1は [インターリーブ](https://cloud.google.com/spanner/docs/schema-and-data-model?hl=en#parent-child) していないスキーマ構成。
+Pattern1 is a schema configuration that is not [interleaved](https://cloud.google.com/spanner/docs/schema-and-data-model?hl=en#parent-child).
 
-``` Pattern1用のDBを作成する
+```Create a DB for Pattern1
 export CLOUDSDK_CORE_PROJECT=gcpug-public-spanner
 export CLOUDSDK_SPANNER_INSTANCE=spanner101
 export DB1=sample1
 gcloud spanner databases create $DB1 --ddl "$(cat ./ddl/ddl.sql)"
-```
+````
 
-DB1の名前は他の人と重複しないように別のものにしておくとよいです。
+It is a good idea to use a different name for DB1 to avoid duplication with others.
