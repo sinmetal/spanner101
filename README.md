@@ -8,7 +8,7 @@ Spanner hands-on materials
 * pattern2 with interleaving
 * pattern3 bonus
 
-I use [spanner-cli](https://github.com/cloudspannerecosystem/spanner-cli) to view the execution plan.
+Since the execution plan is viewed using [https://cloud.google.com/spanner/docs/spanner-cli?hl=en](https://cloud.google.com/spanner/docs/spanner-cli?hl=en), please install the gcloud cli first if it is not already installed on your machine.
 
 ## Singers
 

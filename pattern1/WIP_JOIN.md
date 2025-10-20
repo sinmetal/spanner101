@@ -43,7 +43,7 @@ FROM TargetOrders AS Orders JOIN OrderDetails ON Orders.OrderID = OrderDetails.O
 ```
 
 ```
-spanner-cli -p gcpug-public-spanner -i merpay-sponsored-instance -d sinmetal -e "$(cat query.sql)" -t                                                                                                                                                                1 ↵
+gcloud spanner cli sinmetal --instance=merpay-sponsored-instance --project=gcpug-public-spanner < query.sql                                                                                                                                                                1 ↵
 ```
 
 ```

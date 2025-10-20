@@ -9,26 +9,12 @@ If you have not added sample data for 102_GROUPBY, add sample data for 102_GROUP
 
 ```
 cat ./dml/103_INDEX/sample_data.sql
-spanner-cli -p $CLOUDSDK_CORE_PROJECT -i $CLOUDSDK_SPANNER_INSTANCE -d $DB1 -e "$(cat ./dml/103_INDEX/sample_data.sql)" -t
+gcloud spanner cli $DB1 --instance=$CLOUDSDK_SPANNER_INSTANCE --project=$CLOUDSDK_CORE_PROJECT < ./dml/103_INDEX/sample_data.sql
 ```
 
 ## View the profile of the query that retrieves data for the specified User from the Orders Table
 
-``` query1.sql
-EXPLAIN ANALYZE
-SELECT
-  UserID,
-  OrderID,
-  Amount,
-  CommitedAt
-FROM Orders
-WHERE UserID = "ruby"
-ORDER BY CommitedAt DESC
-LIMIT 5
-```
-
-```
-spanner-cli -p $CLOUDSDK_CORE_PROJECT -i $CLOUDSDK_SPANNER_INSTANCE -d $DB1 -e "$(cat ./dml/103_INDEX/query1.sql)" -t
+gcloud spanner cli $DB1 --instance=$CLOUDSDK_SPANNER_INSTANCE --project=$CLOUDSDK_CORE_PROJECT < ./dml/103_INDEX/query1.sql
 ```
 
 ```
@@ -89,13 +75,13 @@ ON Orders (
 ```
 
 ```
-spanner-cli -p $CLOUDSDK_CORE_PROJECT -i $CLOUDSDK_SPANNER_INSTANCE -d $DB1 -e "$(cat ./dml/103_INDEX/create-index1.sql)" -t
+gcloud spanner cli $DB1 --instance=$CLOUDSDK_SPANNER_INSTANCE --project=$CLOUDSDK_CORE_PROJECT < ./dml/103_INDEX/create-index1.sql
 ```
 
 ## Look again at the profile of the query that retrieves data for the specified User from the Orders Table
 
 ```
-spanner-cli -p $CLOUDSDK_CORE_PROJECT -i $CLOUDSDK_SPANNER_INSTANCE -d $DB1 -e "$(cat ./dml/103_INDEX/query1.sql)" -t
+gcloud spanner cli $DB1 --instance=$CLOUDSDK_SPANNER_INSTANCE --project=$CLOUDSDK_CORE_PROJECT < ./dml/103_INDEX/query1.sql
 ```
 
 ```
