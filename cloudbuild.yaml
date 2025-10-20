@@ -1,5 +1,5 @@
 steps:
-  - name: 'golang:1.22'
+  - name: 'golang:1.24'
     entrypoint: 'go'
     args: [ 'build', '-o', 'app', 'github.com/sinmetal/spanner101/cmd/server' ]
     env: [ 'CGO_ENABLED=0' ]
@@ -28,7 +28,10 @@ steps:
       - --allow-unauthenticated
       - --tag=$BRANCH_NAME
       - --image=us-central1-docker.pkg.dev/$PROJECT_ID/spanner101/app:$COMMIT_SHA
-      - --set-env-vars=SPANNER_DATABASE1=projects/gcpug-public-spanner/instances/merpay-sponsored-instance/databases/sinmetal1
-      - --set-env-vars=SPANNER_DATABASE2=projects/gcpug-public-spanner/instances/merpay-sponsored-instance/databases/sinmetal2
-      - --set-env-vars=SPANNER_DATABASE3=projects/gcpug-public-spanner/instances/merpay-sponsored-instance/databases/sinmetal3
+      - --set-env-vars=SPANNER_DATABASE1=projects/$PROJECT_ID/instances/merpay-sponsored-instance/databases/sinmetal1
+      - --set-env-vars=SPANNER_DATABASE2=projects/$PROJECT_ID/instances/merpay-sponsored-instance/databases/sinmetal2
+      - --set-env-vars=SPANNER_DATABASE3=projects/$PROJECT_ID/instances/merpay-sponsored-instance/databases/sinmetal3
       - --set-env-vars=GOOGLE_API_GO_EXPERIMENTAL_TELEMETRY_PLATFORM_TRACING=opentelemetry
+logsBucket: 'gs://$PROJECT_ID-cloudbuild-log'
+options:
+  logging: GCS_ONLY
