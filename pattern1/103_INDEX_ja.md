@@ -61,7 +61,7 @@ optimizer version:    6
 以下のINDEXを作成しているが、利用されていない。
 
 ```
-CREATE INDEX UserIDAndCommitedAtDescByOrders
+CREATE INDEX OrdersByUserIDAndCommitedAtDesc
     ON Orders (
         UserID,
         CommitedAt DESC
@@ -82,7 +82,7 @@ STORINGするとINDEXのStorage Sizeが増えるので、必要に応じて追�
 STORINGのColumnの追加は既存のINDEXに対して行うことができるが、今回は新しいINDEXを作る。
 
 ``` create-index1.sql
-CREATE INDEX UserIDAndCommitedAtDescStoringAmountByOrders
+CREATE INDEX OrdersByUserIDAndCommitedAtDescStoringAmount
 ON Orders (
   UserID,
   CommitedAt DESC
@@ -104,12 +104,12 @@ gcloud spanner cli $DB1 --instance=$CLOUDSDK_SPANNER_INSTANCE --project=$CLOUDSD
 | ID | Query_Execution_Plan                                                                                                 | Rows_Returned | Executions | Total_Latency |
 +----+----------------------------------------------------------------------------------------------------------------------+---------------+------------+---------------+
 |  0 | Global Limit                                                                                                         | 5             | 1          | 0.07 msecs    |
-| *1 | +- Distributed Union (distribution_table: UserIDAndCommitedAtDescStoringAmountByOrders, split_ranges_aligned: false) | 5             | 1          | 0.07 msecs    |
+| *1 | +- Distributed Union (distribution_table: OrdersByUserIDAndCommitedAtDescStoringAmount, split_ranges_aligned: false) | 5             | 1          | 0.07 msecs    |
 |  2 |    +- Serialize Result                                                                                               | 5             | 1          | 0.06 msecs    |
 |  3 |       +- Local Limit                                                                                                 | 5             | 1          | 0.05 msecs    |
 |  4 |          +- Local Distributed Union                                                                                  | 5             | 1          | 0.05 msecs    |
 | *5 |             +- Filter Scan                                                                                           |               |            |               |
-|  6 |                +- Index Scan (Index: UserIDAndCommitedAtDescStoringAmountByOrders, scan_method: Scalar)              | 5             | 1          | 0.05 msecs    |
+|  6 |                +- Index Scan (Index: OrdersByUserIDAndCommitedAtDescStoringAmount, scan_method: Scalar)              | 5             | 1          | 0.05 msecs    |
 +----+----------------------------------------------------------------------------------------------------------------------+---------------+------------+---------------+
 Predicates(identified by ID):
  1: Split Range: ($UserID = 'ruby')

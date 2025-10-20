@@ -68,7 +68,7 @@ gcloud spanner cli sinmetal2 --instance=merpay-sponsored-instance --project=gcpu
 |   3 |       +- [Input] Global Limit                                                                         | 30            | 1          | 254.81 msecs  |
 |   4 |       |  +- Local Distributed Union                                                                   | 30            | 1          | 254.81 msecs  |
 |  *5 |       |     +- Filter Scan                                                                            |               |            |               |
-|   6 |       |        +- Index Scan (Index: UserIDAndCommitedAtDescByOrdersParentUsers, scan_method: Scalar) | 30            | 1          | 254.8 msecs   |
+|   6 |       |        +- Index Scan (Index: OrdersByUserIDAndCommitedAtDescParentUsers, scan_method: Scalar) | 30            | 1          | 254.8 msecs   |
 |  15 |       +- [Map] Local Distributed Union                                                                | 527           | 30         | 2.04 msecs    |
 |  16 |          +- Compute Struct                                                                            | 527           | 30         | 1.97 msecs    |
 | *17 |             +- Filter Scan                                                                            |               |            |               |

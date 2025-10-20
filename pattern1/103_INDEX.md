@@ -46,7 +46,7 @@ Currently, there are only 10 relevant rows in the table, so the load is low, but
 The following INDEX has been created, but it is not used.
 
 ```
-CREATE INDEX UserIDAndCommitedAtDescByOrders
+CREATE INDEX OrdersByUserIDAndCommitedAtDesc
     ON Orders (
         UserID,
         CommitedAt DESC
@@ -67,7 +67,7 @@ In this case, it's not that heavy since it's just a 10-item JOIN with the Base T
 Adding a STORING Column can be done to an existing INDEX, but this time we will create a new INDEX.
 
 ``` create-index1.sql
-CREATE INDEX UserIDAndCommitedAtDescStoringAmountByOrders
+CREATE INDEX OrdersByUserIDAndCommitedAtDescStoringAmount
 ON Orders (
   UserID,
   CommitedAt DESC
@@ -89,12 +89,12 @@ gcloud spanner cli $DB1 --instance=$CLOUDSDK_SPANNER_INSTANCE --project=$CLOUDSD
 | ID | Query_Execution_Plan                                                                                                 | Rows_Returned | Executions | Total_Latency |
 +----+----------------------------------------------------------------------------------------------------------------------+---------------+------------+---------------+
 |  0 | Global Limit                                                                                                         | 5             | 1          | 0.07 msecs    |
-| *1 | +- Distributed Union (distribution_table: UserIDAndCommitedAtDescStoringAmountByOrders, split_ranges_aligned: false) | 5             | 1          | 0.07 msecs    |
+| *1 | +- Distributed Union (distribution_table: OrdersByUserIDAndCommitedAtDescStoringAmount, split_ranges_aligned: false) | 5             | 1          | 0.07 msecs    |
 |  2 |    +- Serialize Result                                                                                               | 5             | 1          | 0.06 msecs    |
 |  3 |       +- Local Limit                                                                                                 | 5             | 1          | 0.05 msecs    |
 |  4 |          +- Local Distributed Union                                                                                  | 5             | 1          | 0.05 msecs    |
 | *5 |             +- Filter Scan                                                                                           |               |            |               |
-|  6 |                +- Index Scan (Index: UserIDAndCommitedAtDescStoringAmountByOrders, scan_method: Scalar)              | 5             | 1          | 0.05 msecs    |
+|  6 |                +- Index Scan (Index: OrdersByUserIDAndCommitedAtDescStoringAmount, scan_method: Scalar)              | 5             | 1          | 0.05 msecs    |
 +----+----------------------------------------------------------------------------------------------------------------------+---------------+------------+---------------+
 Predicates(identified by ID):
  1: Split Range: ($UserID = 'ruby')
