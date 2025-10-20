@@ -6,7 +6,7 @@ Pattern2は [インターリーブ](https://cloud.google.com/spanner/docs/schema
 export CLOUDSDK_CORE_PROJECT=gcpug-public-spanner
 export CLOUDSDK_SPANNER_INSTANCE=spanner101
 export DB2=sample2
-gcloud spanner databases create $DB2 --ddl "$(cat ./ddl/ddl.sql)"
+gcloud spanner databases create $DB2 --ddl-file=./ddl/ddl.sql
 ```
 
 DB2の名前は他の人と重複しないように別のものにしておくとよいです。
