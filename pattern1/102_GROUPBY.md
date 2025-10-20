@@ -9,7 +9,7 @@ Add 5 rows to Users Table and 6 rows to Orders Table
 
 ```
 cat ./dml/102_GROUPBY/sample_data.sql
-spanner-cli -p $CLOUDSDK_CORE_PROJECT -i $CLOUDSDK_SPANNER_INSTANCE -d $DB1 -e "$(cat ./dml/102_GROUPBY/sample_data.sql)" -t
+gcloud spanner cli $DB1 --instance=$CLOUDSDK_SPANNER_INSTANCE --project=$CLOUDSDK_CORE_PROJECT < ./dml/102_GROUPBY/sample_data.sql
 ```
 
 ## View the profile of a query that aggregates by GROUP BY for each user
@@ -26,7 +26,7 @@ GROUP BY
 ```
 
 ```
-spanner-cli -p $CLOUDSDK_CORE_PROJECT -i $CLOUDSDK_SPANNER_INSTANCE -d $DB1 -e "$(cat ./dml/102_GROUPBY/query1.sql)" -t
+gcloud spanner cli $DB1 --instance=$CLOUDSDK_SPANNER_INSTANCE --project=$CLOUDSDK_CORE_PROJECT < ./dml/102_GROUPBY/query1.sql
 ```
 
 ```

@@ -10,7 +10,7 @@ Orders Tableに8行追加。
 
 ```
 cat ./dml/103_INDEX/sample_data.sql
-spanner-cli -p $CLOUDSDK_CORE_PROJECT -i $CLOUDSDK_SPANNER_INSTANCE -d $DB1 -e "$(cat ./dml/103_INDEX/sample_data.sql)" -t
+gcloud spanner cli $DB1 --instance=$CLOUDSDK_SPANNER_INSTANCE --project=$CLOUDSDK_CORE_PROJECT < ./dml/103_INDEX/sample_data.sql
 ```
 
 ## Orders Tableから指定したUserのデータを取得するクエリのプロファイルを見る
@@ -29,7 +29,7 @@ LIMIT 5
 ```
 
 ```
-spanner-cli -p $CLOUDSDK_CORE_PROJECT -i $CLOUDSDK_SPANNER_INSTANCE -d $DB1 -e "$(cat ./dml/103_INDEX/query1.sql)" -t
+gcloud spanner cli $DB1 --instance=$CLOUDSDK_SPANNER_INSTANCE --project=$CLOUDSDK_CORE_PROJECT < ./dml/103_INDEX/query1.sql
 ```
 
 ```
@@ -90,13 +90,13 @@ ON Orders (
 ```
 
 ```
-spanner-cli -p $CLOUDSDK_CORE_PROJECT -i $CLOUDSDK_SPANNER_INSTANCE -d $DB1 -e "$(cat ./dml/103_INDEX/create-index1.sql)" -t
+gcloud spanner cli $DB1 --instance=$CLOUDSDK_SPANNER_INSTANCE --project=$CLOUDSDK_CORE_PROJECT < ./dml/103_INDEX/create-index1.sql
 ```
 
 ## Orders Tableから指定したUserのデータを取得するクエリのプロファイルを再度見る
 
 ```
-spanner-cli -p $CLOUDSDK_CORE_PROJECT -i $CLOUDSDK_SPANNER_INSTANCE -d $DB1 -e "$(cat ./dml/103_INDEX/query1.sql)" -t
+gcloud spanner cli $DB1 --instance=$CLOUDSDK_SPANNER_INSTANCE --project=$CLOUDSDK_CORE_PROJECT < ./dml/103_INDEX/query1.sql
 ```
 
 ```

@@ -8,7 +8,7 @@ Spannerのテーブル設計をする上で重要で固有の機能である [�
 * pattern2 インターリーブあり
 * pattern3 おまけ
 
-実行計画を見るために [spanner-cli](https://github.com/cloudspannerecosystem/spanner-cli) を利用している。
+実行計画は https://cloud.google.com/spanner/docs/spanner-cli?hl=en を利用して見ているので、gcloud cliがマシンに入っていない場合は、最初にインストールしてください。
 
 ## Singers
 

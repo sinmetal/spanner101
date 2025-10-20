@@ -9,7 +9,7 @@ Users Tableに5行、Orders Tableに6行を追加
 
 ```
 cat ./dml/102_GROUPBY/sample_data.sql
-spanner-cli -p $CLOUDSDK_CORE_PROJECT -i $CLOUDSDK_SPANNER_INSTANCE -d $DB2 -e "$(cat ./dml/102_GROUPBY/sample_data.sql)" -t
+gcloud spanner cli $DB2 --instance=$CLOUDSDK_SPANNER_INSTANCE --project=$CLOUDSDK_CORE_PROJECT < ./dml/102_GROUPBY/sample_data.sql
 ```
 
 ## UserごとにGROUP BYで集計を行うクエリのプロファイルを見る
@@ -26,7 +26,7 @@ GROUP BY
 ```
 
 ```
-spanner-cli -p $CLOUDSDK_CORE_PROJECT -i $CLOUDSDK_SPANNER_INSTANCE -d $DB2 -e "$(cat ./dml/102_GROUPBY/query1.sql)" -t
+gcloud spanner cli $DB2 --instance=$CLOUDSDK_SPANNER_INSTANCE --project=$CLOUDSDK_CORE_PROJECT < ./dml/102_GROUPBY/query1.sql
 ```
 
 ```

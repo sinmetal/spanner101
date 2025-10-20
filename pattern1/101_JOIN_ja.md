@@ -9,7 +9,7 @@ JOINするクエリのプロファイルを見る
 
 ```
 cat ./dml/101_JOIN/sample_data.sql
-spanner-cli -p $CLOUDSDK_CORE_PROJECT -i $CLOUDSDK_SPANNER_INSTANCE -d $DB1 -e "$(cat ./dml/101_JOIN/sample_data.sql)" -t
+gcloud spanner cli $DB1 --instance=$CLOUDSDK_SPANNER_INSTANCE --project=$CLOUDSDK_CORE_PROJECT < ./dml/101_JOIN/sample_data.sql
 ```
 
 ## JOINするクエリのプロファイルを見る
@@ -24,7 +24,7 @@ WHERE s.SingerId = 1;
 ```
 
 ```
-spanner-cli -p $CLOUDSDK_CORE_PROJECT -i $CLOUDSDK_SPANNER_INSTANCE -d $DB1 -e "$(cat ./dml/101_JOIN/query1.sql)" -t
+gcloud spanner cli $DB1 --instance=$CLOUDSDK_SPANNER_INSTANCE --project=$CLOUDSDK_CORE_PROJECT < ./dml/101_JOIN/query1.sql
 +-----+--------------------------------------------------------------------------------------------+---------------+------------+---------------+
 | ID  | Query_Execution_Plan                                                                       | Rows_Returned | Executions | Total_Latency |
 +-----+--------------------------------------------------------------------------------------------+---------------+------------+---------------+
