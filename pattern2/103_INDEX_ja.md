@@ -61,7 +61,7 @@ pattern1と比べると `Sort Limit` がLocal Distributed Unionのすぐ後に�
 以下のINDEXを作成しているが、利用されていない。
 
 ```
-CREATE INDEX UserIDAndCommitedAtDescParentUsersByOrders
+CREATE INDEX OrdersByUserIDAndCommitedAtDescParentUsers
     ON Orders (
         UserID,
         CommitedAt DESC

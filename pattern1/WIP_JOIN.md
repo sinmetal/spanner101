@@ -54,11 +54,11 @@ gcloud spanner cli sinmetal --instance=merpay-sponsored-instance --project=gcpug
 |   1 | +- [Input] Create Batch                                                                                          |               |            |               |
 |   2 | |  +- Compute Struct                                                                                             | 30            | 1          | 3 msecs       |
 |   3 | |     +- Global Limit                                                                                            | 30            | 1          | 2.97 msecs    |
-|  *4 | |        +- Distributed Union (distribution_table: UserIDAndCommitedAtDescByOrders, split_ranges_aligned: false) | 30            | 1          | 2.97 msecs    |
+|  *4 | |        +- Distributed Union (distribution_table: OrdersByUserIDAndCommitedAtDesc, split_ranges_aligned: false) | 30            | 1          | 2.97 msecs    |
 |   5 | |           +- Local Limit                                                                                       | 30            | 1          | 2.95 msecs    |
 |   6 | |              +- Local Distributed Union                                                                        | 30            | 1          | 2.95 msecs    |
 |  *7 | |                 +- Filter Scan                                                                                 |               |            |               |
-|   8 | |                    +- Index Scan (Index: UserIDAndCommitedAtDescByOrders, scan_method: Scalar)                 | 30            | 1          | 2.94 msecs    |
+|   8 | |                    +- Index Scan (Index: OrdersByUserIDAndCommitedAtDesc, scan_method: Scalar)                 | 30            | 1          | 2.94 msecs    |
 |  24 | +- [Map] Serialize Result                                                                                        | 469           | 1          | 29.71 msecs   |
 |  25 |    +- Compute Struct                                                                                             | 469           | 1          | 29.24 msecs   |
 |  26 |       +- Cross Apply                                                                                             | 469           | 1          | 29.05 msecs   |

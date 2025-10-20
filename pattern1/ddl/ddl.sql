@@ -60,7 +60,7 @@ CREATE TABLE Orders
 ) PRIMARY KEY (UserID, OrderID),
   ROW DELETION POLICY (OLDER_THAN(CommitedAt, INTERVAL 90 DAY));
 
-CREATE INDEX UserIDAndCommitedAtDescByOrders
+CREATE INDEX OrdersByUserIDAndCommitedAtDesc
     ON Orders (
         UserID,
         CommitedAt DESC

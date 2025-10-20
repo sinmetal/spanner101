@@ -38,7 +38,7 @@ SELECT * FROM EXTERNAL_QUERY(
        Orders.OrderID,
        Orders.Amount,
        Orders.CommitedAt
-     FROM Users JOIN Orders@{FORCE_INDEX=UserIDAndCommitedAtDescByOrdersParentUsers} ON Users.UserID = Orders.UserID
+     FROM Users JOIN Orders@{FORCE_INDEX=OrdersByUserIDAndCommitedAtDescParentUsers} ON Users.UserID = Orders.UserID
      WHERE FORMAT_TIMESTAMP("%Y%m",Orders.CommitedAt, "Asia/Tokyo") = "202309"''') AS UserOrders
 ```
 
@@ -51,7 +51,7 @@ SELECT * FROM EXTERNAL_QUERY(
 |   2 |    +- Serialize Result                                                                                                          | 19573         | 1          | 1.01 secs     |
 |   3 |       +- Cross Apply                                                                                                            | 19573         | 1          | 994.74 msecs  |
 |  *4 |          +- [Input] Filter Scan                                                                                                 |               |            |               |
-|   5 |          |  +- Index Scan (Full scan: true, Index: UserIDAndCommitedAtDescByOrdersStoredAmountParentUsers, scan_method: Scalar) | 19573         | 1          | 34.63 msecs   |
+|   5 |          |  +- Index Scan (Full scan: true, Index: OrdersByUserIDAndCommitedAtDescStoredAmountParentUsers, scan_method: Scalar) | 19573         | 1          | 34.63 msecs   |
 |  17 |          +- [Map] Local Distributed Union                                                                                       | 19573         | 19573      | 952.32 msecs  |
 | *18 |             +- Filter Scan (seekable_key_size: 1)                                                                               | 19573         | 19573      | 941.31 msecs  |
 |  19 |                +- Table Scan (Table: Users, scan_method: Scalar)                                                                | 19573         | 19573      | 924.97 msecs  |
